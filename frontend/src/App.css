@@ -1,0 +1,17 @@
+
+body {
+  background-color: black;
+  color: rgb(230, 230, 230);
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: stretch;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}

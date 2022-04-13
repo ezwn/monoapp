@@ -1,0 +1,16 @@
+
+
+.relation.pointed line {
+  stroke: rgb(99, 0, 0) !important;
+  stroke-width: 14 !important;
+}
+
+.relation-end {
+  stroke: rgb(150, 150, 150);
+  stroke-width: 9;
+}
+
+.relation-end.pointed {
+  stroke: rgb(99, 0, 0) !important;
+  stroke-width: 14 !important;
+}
