@@ -1,24 +1,30 @@
 # MonoApp and applications
 
-MonoApp is an modular application framework. But this repository also contains applications built around MonoApp.
+MonoApp is an modular application framework. But this repository also contains applications built with this framework...
+
+## Applications
+
+This repository contains:
+
+- [A diagram quick editor](./doc/QuickDia.md).
+- A timeline view. (experimental)
+- A texture editor. (experimental)
+- A 3D world editor. (experimental)
 
 ## MonoApp
 
-It's a minimalist application framework working like an web operating system:
+MonoApp is a minimalist application framework working like an web operating system:
 
-- "fs4webapp" is the backend providing access to the file system
-- "fontend" contains the frontend part of the framework and the applications 
+- "fs4webapp" is the backend providing access to the file system.
 
-## Modules
+- "fontend" contains the frontend part of the framework and the applications.
 
-In the frontend, "lib" contains shared libraries and "features" entry points. The features include:
+Features ("applications") are triggered by opening a file type associated to them (like in a file explorer).
 
-- A diagram editor
-- A timeline editor (experimental)
-- A 3D world editor (very experimental)
+## Module overview and diagram example
 
-Features are triggered by opening a file type associated to them (like in a file explorer).
+![MonoApp](./doc/MonoApp-Modules.png)
 
-## Dependencies between modules
+## Important notes
 
-![MonoApp](./doc/MonoApp.png)
+The original repository is on bitbucket, and the one from github is updated by copy/pasting code. For this reason you cannot see all the commits on github.

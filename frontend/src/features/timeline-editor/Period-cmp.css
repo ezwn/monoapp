@@ -1,12 +1,15 @@
 
 .period-cmp {
     position: relative;
-    background-color: rgb(0, 0, 54);
-    border: solid 1px rgb(63, 63, 211);
-    padding: 5px;
+    padding: 8px;
     box-sizing: border-box;
     margin-top: 5px;
     font-size: 80%;
+
+    color: #e6e6e6;
+    border: 1px solid #646464;
+    background-color: #242424;
+    border-radius: 3px;
 }
 
 .event-cmp {

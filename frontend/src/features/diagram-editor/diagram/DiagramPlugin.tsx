@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useDiagramUIContext } from '../shared/DiagramUI-ctx';
 import { usePointingContext } from '../shared/Pointing-ctx';
 import { useSelectionContext } from '../../../lib/Selection-ctx';
-import { DiagramRect, DiagramRelation, DiagramText, EndDecoration, instanceOfDiagramRelation, instanceOfDiagramText, RelationShape } from './Diagram-mdl';
+import { DiagramRelation, DiagramText, EndDecoration, instanceOfDiagramRelation, instanceOfDiagramText, RelationShape } from './Diagram-mdl';
 import { useDiagramInteractionContext } from './DiagramInteraction-ctx';
 import { useDiagramRelationInteractionContext } from './elements/DiagramRelationInteraction-ctx';
-import { Command, CommandProvider } from '../shared/commands/Command-ctx';
+import { Command, CommandProvider } from '../../../lib/commands/Command-ctx';
 
 
 export const DiagramPlugin: React.FC<{}> = ({ children }) => {
   const { pointedLocation, pointedElement } = usePointingContext();
   const { selection } = useSelectionContext();
-  const { mode, setHasDragged } = useDiagramUIContext();
   const { keepElements, mapElements, selectElements } = useDiagramInteractionContext();
   const { createRelation, selectRelation } = useDiagramRelationInteractionContext();
 
@@ -24,9 +22,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
     const isRelationEnd = !!pointedElement && !pointedDiagramElement;
 
     const changeRelationEndDecoration = (shortcut: string, decoration?: EndDecoration) => ({
-      group: 'd[et|ft|er|fr|xx]',
+      group: 'd{et|ft|er|fr|xx}',
       shortcut,
-      title: <>d[et|ft|er|fr]. Change decoration</>,
+      title: <>d&#123;et|ft|er|fr&#125;. Change decoration</>,
       isAvailable: () => isRelationEnd,
       execute: () => {
         if (pointedElement) {
@@ -51,11 +49,10 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
       }
     });
 
-
     const changeRelationShape = (shortcut: string, shape: RelationShape) => ({
-      group: 's[c|r1|r2]',
+      group: 's{c|r1|r2}',
       shortcut,
-      title: <>s[c|r1|r2]. Change shape</>,
+      title: <>sd&#123;c|r1|r2&#125;. Change shape</>,
       isAvailable: () => pointedDiagramElement && instanceOfDiagramRelation(pointedDiagramElement),
       execute: () => {
         if (pointedElement) {
@@ -74,11 +71,14 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
       }
     });
 
+    const referredFromRelation = !!pointedElement && selectElements(element =>
+      instanceOfDiagramRelation(element) && (element as DiagramRelation).ends.some(end => end.target === pointedElement)).length > 0;
+
     const newCommands: Command[] = [
       {
         shortcut: 'd',
         title: <>d. Delete</>,
-        isAvailable: () => !!pointedDiagramElement,
+        isAvailable: () => !!pointedDiagramElement && !referredFromRelation,
         execute: () => {
           if (pointedElement) {
             keepElements(
@@ -178,9 +178,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
 
     for (let i = 0; i < 12; i++) {
       newCommands.push({
-        group: 'm00-12',
+        group: 'm[00-11]',
         shortcut: i < 10 ? `m0${i}` : `m${i}`,
-        title: <>m00-12. Attach to...</>,
+        title: <>m[00-11]. Attach to...</>,
         isAvailable: () => isRelationEnd,
         execute: () => {
           if (pointedElement) {
@@ -209,34 +209,6 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
     setCommands(newCommands);
 
   }, [createRelation, mapElements, selectRelation, keepElements, pointedLocation, pointedElement, selection, selectElements]);
-
-  // TODO: react to event instead of trying to detect it here.
-  useEffect(() => {
-    const [, , dX, dY] = pointedLocation;
-
-    if (mode === "DRAG" && (dX !== 0 || dY !== 0) && selection.length > 0) {
-
-      let onWasDragged = false;
-      mapElements((element) => {
-        if (selection.includes(element.id)) {
-          onWasDragged = true;
-
-          const rect = element as DiagramRect;
-          const [left, top, width] = rect.userBounds;
-
-          return {
-            ...element,
-            userBounds: [left + dX, top + dY, width]
-          };
-        }
-
-        return element;
-      });
-
-      if (onWasDragged && (Math.abs(dX) > 2 || Math.abs(dY) > 2))
-        setHasDragged(true);
-    }
-  }, [mode, selection, pointedLocation]);
 
   return <CommandProvider commands={commands}>{children}</CommandProvider>;
 };

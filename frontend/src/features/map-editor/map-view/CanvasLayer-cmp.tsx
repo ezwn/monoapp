@@ -1,16 +1,19 @@
 import React, { useEffect, useRef } from 'react';
-import { renderHeightMapToCanvas } from '../lib/map/Map';
+import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
+import { renderHeightMapToCanvas, runGenerators } from '../lib/map/Map';
 import { imageSize, useMapViewContext } from './MapView-ctxt';
 
-export const HeightMapLayer: React.FC = () => {
+export const CanvasLayer: React.FC = () => {
 
   const worldDivRef = useRef<HTMLCanvasElement>(null);
   const { current: canvasElement } = worldDivRef;
   const { map } = useMapViewContext();
+  const { currentPath } = useNavigatorPersistenceContext();
 
   useEffect(() => {
     if (canvasElement && map) {
       renderHeightMapToCanvas(canvasElement, map, 0, 0, 100, 100);
+      runGenerators(currentPath, canvasElement, map);
     }
   }, [canvasElement]);
 

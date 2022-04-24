@@ -5,7 +5,7 @@ import { useSelectionContext } from '../../../lib/Selection-ctx';
 import { useDiagramInteractionContext } from '../diagram/DiagramInteraction-ctx';
 import { Note } from './Note-mdl';
 import { generateRandomTextId } from '../../../lib/js-utils/generateRandomTextId';
-import { Command, CommandProvider } from '../shared/commands/Command-ctx';
+import { Command, CommandProvider } from '../../../lib/commands/Command-ctx';
 
 const createNoteFn = (
   addElement: (category: string, element: Note) => void,

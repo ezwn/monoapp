@@ -17,7 +17,7 @@ export type IDiagramInteractionValue = {
   patchElement<T extends DiagramElement>(category: string, id: string, patch: Partial<T>): void;
 };
 
-export const defaultValue: IDiagramInteractionValue = {
+const defaultValue: IDiagramInteractionValue = {
   diagram: null,
   keepElements: () => null,
   selectElements: () => [],
@@ -26,7 +26,7 @@ export const defaultValue: IDiagramInteractionValue = {
   patchElement: () => { },
 };
 
-export const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInteractionValue = () => {
+const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInteractionValue = () => {
   const { diagram, saveDiagram } = useDiagramPersistenceContext();
 
   const selectElements: SelectDiagramElementFn = useCallback((selectFn) => {

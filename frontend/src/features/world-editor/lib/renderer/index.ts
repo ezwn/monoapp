@@ -72,7 +72,7 @@ export class GLRenderer {
 
 export const createAreaTerrain = async (worldPath: string, x: number, y: number, z: number): Promise<Mesh | null> => {
   const heightMapFile = pathToUrl(`${worldPath}/areas/${x}x${y}x${z}.png`);
-  const textureFile = pathToUrl(`${worldPath}/areas/grass.jpg`);
+  const textureFile = pathToUrl(`${worldPath}/areas/ground.png`);
   const heightMap: Texture = new TextureLoader().load(heightMapFile);
   const texture: Texture = new TextureLoader().load(textureFile);
 

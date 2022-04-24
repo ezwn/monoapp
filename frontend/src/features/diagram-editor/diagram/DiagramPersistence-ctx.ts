@@ -12,12 +12,12 @@ export type DiagramPersistenceValue = {
   saveDiagram: (diagram: Diagram) => void;
 };
 
-export const defaultValue: DiagramPersistenceValue = {
+const defaultValue: DiagramPersistenceValue = {
   diagram: null,
   saveDiagram: () => { }
 };
 
-export const useDiagramPersistence: (props: DiagramPersistenceProps) => DiagramPersistenceValue = ({ diagramId }) => {
+const useDiagramPersistence: (props: DiagramPersistenceProps) => DiagramPersistenceValue = ({ diagramId }) => {
   const [diagram, setDiagram] = useState<Diagram | null>(defaultValue.diagram);
 
   useEffect(() => {

@@ -12,19 +12,20 @@ import { useDiagramUIContext } from '../../shared/DiagramUI-ctx';
 
 import './DiagramRect-cmp.css';
 import { stopEvent } from '../../../../lib/ui-components/stopEvent';
+import { useDiagramDragContext } from '../DiagramDrag-ctx';
 
 export const DiagramRectCmp: React.FC<DiagramRect> = ({ children, userBounds: [left, top, width], id, bounds }) => {
   const { setSelection, selection } = useSelectionContext();
   const { setPointedElement, pointedElement } = usePointingContext();
   const { patchElement } = useDiagramInteractionContext();
   const { mode, setMode } = useDiagramUIContext();
-
+  const { startDragging, stopDragging } = useDiagramDragContext();
   const mainDiv = createRef<HTMLDivElement>();
-  const selected = selection.indexOf(id) !== -1;
-  const edition = selected && mode === 'EDITION';
+  const isSelected = selection.indexOf(id) !== -1;
+  const isEdited = isSelected && mode === 'EDITION';
 
   useEffect(() => {
-    if (!edition && mainDiv.current) {
+    if (!isEdited && mainDiv.current) {
       const { width: measuredWidth, height: measuredHeight } = mainDiv.current.getBoundingClientRect();
 
       if (!bounds || bounds[0] !== left
@@ -35,7 +36,7 @@ export const DiagramRectCmp: React.FC<DiagramRect> = ({ children, userBounds: [l
 
       }
     }
-  }, [edition, mainDiv, bounds, patchElement, id, left, top]);
+  }, [isEdited, mainDiv, bounds, patchElement, id, left, top]);
 
   const onMouseEnter = () => {
     setPointedElement(id);
@@ -56,21 +57,24 @@ export const DiagramRectCmp: React.FC<DiagramRect> = ({ children, userBounds: [l
   }, [mainDiv, id, left, top, width, patchElement]);
 
   const onMouseDown = useCallback((event: MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
+    stopEvent(event);
 
-    if (!selected)
+    if (!isSelected)
       setSelection(event.ctrlKey ? [...selection, id] : [id]);
 
-    setMode('DRAG');
-  }, [selected, setSelection, setMode, id, selection]);
+    if (!event.ctrlKey) {
+      startDragging();
+    }
+  }, [isSelected, setSelection, startDragging, id, selection]);
 
   const onMouseUp = useCallback((event: MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
+    stopEvent(event);
 
-    setMode(event.ctrlKey ? 'DEFAULT' : 'EDITION');
-  }, [setMode]);
+    if (mode === 'DRAG') {
+      const hasDragged = stopDragging();
+      setMode(hasDragged || selection.length!==1 ? 'DEFAULT' : 'EDITION');
+    }
+  }, [stopDragging, setMode, mode, selection]);
 
   return (
     <div
@@ -78,17 +82,17 @@ export const DiagramRectCmp: React.FC<DiagramRect> = ({ children, userBounds: [l
       onWheel={onWheel}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      className={classNames({ floating: true, rect: true, pointed: id === pointedElement, selected })}
+      onMouseDown={isEdited ? undefined : onMouseDown}
+      onMouseUp={isEdited ? undefined : onMouseUp}
+      onClick={stopEvent}
+      className={classNames({ floating: true, rect: true, pointed: id === pointedElement, selected: isSelected })}
       style={{
         left,
         top,
         width,
-        minHeight: edition ? bounds && bounds[3] : undefined,
-        minWidth: !width && edition ? bounds && bounds[2] : undefined
+        minHeight: isEdited ? bounds && bounds[3] : undefined,
+        minWidth: !width && isEdited ? bounds && bounds[2] : undefined
       }}
-      onMouseDown={edition ? undefined : onMouseDown}
-      onMouseUp={edition ? undefined : onMouseUp}
-      onClick={stopEvent}
     >
       {children}
     </div>

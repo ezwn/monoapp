@@ -15,7 +15,7 @@ export type IDiagramRelationInteractionValue = {
   selectRelation: () => void;
 };
 
-export const defaultValue: IDiagramRelationInteractionValue = {
+const defaultValue: IDiagramRelationInteractionValue = {
   createRelation: () => true,
   selectRelation: () => undefined,
 };
@@ -29,7 +29,7 @@ const filterRelationContainsEndById = (endId: string) => (element: DiagramElemen
   return relation.ends.some(end => end.id === endId);
 }
 
-export const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) => IDiagramRelationInteractionValue = () => {
+const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) => IDiagramRelationInteractionValue = () => {
 
   const { selection } = useSelectionContext();
   const { pointedElement, setPointedElement } = usePointingContext();

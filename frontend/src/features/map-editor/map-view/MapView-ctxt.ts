@@ -6,31 +6,29 @@ import { Map } from "../lib/map/persistence";
 
 export const imageSize = [512, 512];
 
-
 export type MapToImageProps = {
-    mapPath?: string;
+  mapPath?: string;
 };
 
 export type MapToImageValue = {
-    map?: MapHandler;
+  map?: MapHandler;
 };
 
-export const defaultValue: MapToImageValue = {
-    map: undefined
+const defaultValue: MapToImageValue = {
+  map: undefined
 };
 
-const useMapToImage: (props: MapToImageProps) => MapToImageValue = ({mapPath}) => {
-    const [map, setMap] = useState<MapHandler>();
+const useMapToImage: (props: MapToImageProps) => MapToImageValue = ({ mapPath }) => {
+  const [map, setMap] = useState<MapHandler>();
 
-    useEffect(() => {
-      if (mapPath) {
-        loadFile<Map>(mapPath).then(map => setMap(new MapHandler(map)));
-      }
-    }, [mapPath]);
+  useEffect(() => {
+    if (mapPath) {
+      loadFile<Map>(mapPath).then(map => setMap(new MapHandler(map)));
+    }
+  }, [mapPath]);
 
   return { map };
 };
-
 
 const hookBasedContext = createHookBasedContext(useMapToImage, defaultValue);
 

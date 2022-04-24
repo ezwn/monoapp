@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { File, ls } from '../../lib/fs4webapp-client';
 import { createHookBasedContext } from '../../lib/react-utils/createHookBasedContext';
 
@@ -12,7 +12,7 @@ export type NavigatorPersistenceValue = {
   gotoParentPath: () => void;
 };
 
-export const defaultValue: NavigatorPersistenceValue = {
+const defaultValue: NavigatorPersistenceValue = {
   files: [],
   currentFile: null,
   setTarget: () => { },
@@ -20,7 +20,7 @@ export const defaultValue: NavigatorPersistenceValue = {
   gotoParentPath: () => { },
 };
 
-export const useNavigatorPersistence: (props: NavigatorPersistenceProps) => NavigatorPersistenceValue = () => {
+const useNavigatorPersistence: (props: NavigatorPersistenceProps) => NavigatorPersistenceValue = () => {
   const [currentPath, setCurrentPath] = useState<string>("");
   const [currentFile, setCurrentFile] = useState<File | null>(defaultValue.currentFile);
   const [files, setFiles] = useState<File[]>(defaultValue.files);
@@ -40,17 +40,17 @@ export const useNavigatorPersistence: (props: NavigatorPersistenceProps) => Navi
     }
   }, [files]);
 
-  const setTarget = (target: File) => {
+  const setTarget = useCallback((target: File) => {
     if (target.isDirectory) {
       setCurrentPath(target.path);
     }
     setCurrentFile(target);
-  }
+  }, []);
 
-  const gotoParentPath = () => {
+  const gotoParentPath = useCallback(() => {
     const o = currentPath.lastIndexOf("/");
     setCurrentPath(currentPath.substring(0, o));
-  }
+  }, [currentPath]);
 
   return { files, currentFile, currentPath, setTarget, gotoParentPath };
 };

@@ -15,7 +15,7 @@ export const DiagramTextCmp: React.FC<DiagramText> = (props) => {
   const { patchElement } = useDiagramInteractionContext();
   const { mode } = useDiagramUIContext();
 
-  const edition = selection.indexOf(id) !== -1 && mode === 'EDITION';
+  const isEdited = selection.indexOf(id) !== -1 && mode === 'EDITION';
 
   const patchContent = useCallback((event: ChangeEvent<HTMLTextAreaElement>): void =>
     {
@@ -31,7 +31,7 @@ export const DiagramTextCmp: React.FC<DiagramText> = (props) => {
   };
 
   const stopEventOnEdition = (event: SyntheticEvent) => {
-    if (edition)
+    if (isEdited)
       event.stopPropagation();
   }
 
@@ -40,7 +40,7 @@ export const DiagramTextCmp: React.FC<DiagramText> = (props) => {
       onMouseDown={stopEventOnEdition}
       onMouseUp={stopEventOnEdition}
       onClick={stopEventOnEdition}>
-      {edition && (
+      {isEdited && (
         <textarea
           value={content}
           onChange={patchContent}
@@ -52,7 +52,7 @@ export const DiagramTextCmp: React.FC<DiagramText> = (props) => {
           style={{ fontSize }}
         />
       )}
-      {edition ? <EditionContentCmp {...props} /> : <ContentCmp {...props} />}
+      {isEdited ? <EditionContentCmp {...props} /> : <ContentCmp {...props} />}
     </div>
   );
 };

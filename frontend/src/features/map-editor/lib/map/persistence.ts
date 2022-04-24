@@ -15,8 +15,22 @@ export interface MapElement {
     peak?: Peak;
 }
 
+export interface NumberRange {
+    min: number,
+    max: number
+}
+
+export interface MapGenerator {
+    imagePath: string;
+    size: { width: number, height: number };
+    count: number;
+    scale: NumberRange;
+    rotation: NumberRange;
+}
+
 export interface Map {
     elements: MapElement[];
+    generators?: MapGenerator[];
 }
 
 // tools

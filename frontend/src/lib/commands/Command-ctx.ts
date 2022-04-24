@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { createHookBasedContext } from '../../../../lib/react-utils/createHookBasedContext';
+import { createHookBasedContext } from '../react-utils/createHookBasedContext';
 
 export interface Command {
     shortcut: string;
@@ -17,14 +17,13 @@ export interface CommandValue {
     commands: Command[];
 };
 
-export const defaultValue: CommandValue = {
+const defaultValue: CommandValue = {
     commands: []
 };
 
-
 let useCommandContext2: () => CommandValue;
 
-export const useCommand: (props: CommandProps) => CommandValue = ({ commands }) => {
+const useCommand: (props: CommandProps) => CommandValue = ({ commands }) => {
     const { commands: inheritedCommands } = useCommandContext2();
     return { commands: [...inheritedCommands, ...commands] };
 };

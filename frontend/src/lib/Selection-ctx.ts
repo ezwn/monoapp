@@ -8,12 +8,12 @@ export type SelectionValue = {
   setSelection: (selection: string[]) => void;
 };
 
-export const defaultValue: SelectionValue = {
+const defaultValue: SelectionValue = {
   selection: [],
   setSelection: () => {}
 };
 
-export const useSelection: (props: SelectionProps) => SelectionValue = () => {
+const useSelection: (props: SelectionProps) => SelectionValue = () => {
   const [selection, setSelection] = useState(defaultValue.selection);
   return { selection, setSelection };
 };

@@ -10,7 +10,7 @@ export type PointingContextValue = {
   setPointedLocation: (pointedLocation: number[]) => void;
 };
 
-export const defaultValue: PointingContextValue = {
+const defaultValue: PointingContextValue = {
   pointedElement: null,
   setPointedElement: () => {},
   pointedLocation: [],

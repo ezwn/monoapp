@@ -1,6 +1,6 @@
-import { saveFileWithContentType, saveJSONFile } from '../../../../lib/fs4webapp-client';
+import { pathToUrl, saveFileWithContentType, saveJSONFile } from '../../../../lib/fs4webapp-client';
 import { areaSideSize, areaTerrainResolution, saveElement, ThreeDWorldAreaData } from '../../../../lib/world/persistence';
-import { Map } from './persistence';
+import { Map, NumberRange } from './persistence';
 
 const distance = ([xA, yA]: number[], [xB, yB]: number[]) => Math.sqrt(Math.pow(xB - xA, 2) + Math.pow(yB - yA, 2));
 
@@ -9,7 +9,7 @@ const worldSideSize = areaSideSize * numberOfAreas;
 
 export class MapHandler {
 
-  private map: Map;
+  public map: Map;
 
   constructor(map: Map) {
     this.map = map;
@@ -29,9 +29,14 @@ export class MapHandler {
   }
 }
 
-export const renderHeightMapToCanvas = (canvas: HTMLCanvasElement, map: MapHandler, mapX0: number, mapY0: number, mapAreaWidth: number, mapAreaHeight: number) => {
-  console.log("renderHeightMapToCanvas", map)
-
+export const renderHeightMapToCanvas = (
+  canvas: HTMLCanvasElement,
+  map: MapHandler,
+  mapX0: number,
+  mapY0: number,
+  mapAreaWidth: number,
+  mapAreaHeight: number
+) => {
   const context = canvas.getContext('2d');
 
   if (context) {
@@ -58,8 +63,62 @@ export const renderHeightMapToCanvas = (canvas: HTMLCanvasElement, map: MapHandl
   }
 };
 
-export const generateWorld = async (currentPath: string, map: MapHandler) => {
+const linearRandom = ({ min, max }: NumberRange) => {
+  return min + (max - min) * Math.random();
+}
 
+const drawImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, x: number, y: number, w: number, h: number, rotate: number) => {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(rotate);
+  //ctx.translate(-x,-y);
+  ctx.drawImage(img, 0, 0, w, h);
+  ctx.restore();
+}
+
+export const runGenerators = async (
+  currentPath: string,
+  canvas: HTMLCanvasElement,
+  mapHandler: MapHandler,
+) => {
+  const context = canvas.getContext('2d');
+
+  if (context) {
+
+    context.fillStyle = "green";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    if (!mapHandler.map.generators) {
+      return;
+    }
+
+    const { width: canvasWidth, height: canvasHeight } = canvas;
+
+    for (let generator of mapHandler.map.generators) {
+      const { imagePath, count, size: { width, height }, scale, rotation } = generator;
+      const img = document.createElement('img');
+      img.src = pathToUrl(`${currentPath}/${imagePath}`);
+      await img.decode();
+      for (let i = 0; i < count; i++) {
+        const x = canvasWidth * Math.random();
+        const y = canvasHeight * Math.random();
+        const s = linearRandom(scale);
+        const r = linearRandom(rotation);
+
+        const w = width * s;
+        const h = height * s;
+
+        drawImage(context, img, x, y, w, h, r);
+        drawImage(context, img, x - canvasWidth, y, w, h, r);
+        drawImage(context, img, x + canvasWidth, y, w, h, r);
+        drawImage(context, img, x, y - canvasHeight, w, h, r);
+        drawImage(context, img, x, y + canvasHeight, w, h, r);
+      }
+    }
+  }
+};
+
+export const generateWorld = async (currentPath: string, map: MapHandler) => {
   for (let c = 0; c < numberOfAreas; c++) {
     for (let l = 0; l < numberOfAreas; l++) {
 

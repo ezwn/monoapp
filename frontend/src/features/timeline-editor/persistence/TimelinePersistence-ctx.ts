@@ -12,11 +12,11 @@ export type TimelinePersistenceValue = {
   timeline: Timeline | null;
 };
 
-export const defaultValue: TimelinePersistenceValue = {
+const defaultValue: TimelinePersistenceValue = {
   timeline: null,
 };
 
-export const useTimelinePersistence: (props: TimelinePersistenceProps) => TimelinePersistenceValue = ({ timelineId }) => {
+const useTimelinePersistence: (props: TimelinePersistenceProps) => TimelinePersistenceValue = ({ timelineId }) => {
   const [timeline, setTimeline] = useState<Timeline | null>(defaultValue.timeline);
 
   useEffect(() => {

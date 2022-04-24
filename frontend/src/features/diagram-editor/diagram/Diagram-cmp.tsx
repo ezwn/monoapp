@@ -1,93 +1,67 @@
-import React, { createRef, MouseEvent, useCallback, useState } from 'react';
+import React, { createRef, MouseEvent, useCallback, useEffect, useState } from 'react';
 
-import { DiagramInteractionProvider, useDiagramInteractionContext } from './DiagramInteraction-ctx';
-import { DiagramPersistenceProvider } from './DiagramPersistence-ctx';
 import { DiagramElement } from './Diagram-mdl';
 import { useSelectionContext } from '../../../lib/Selection-ctx';
 import { NoteCmp } from '../diagram-notes/Note-cmp';
-import { NotePlugin } from '../diagram-notes/NotePlugin';
-import { usePointingContext } from '../shared/Pointing-ctx';
 import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
 import { useDiagramUIContext } from '../shared/DiagramUI-ctx';
-import { DiagramPlugin } from './DiagramPlugin';
 import { DiagramRelationCmp } from './elements/DiagramRelation-cmp';
-import { DiagramRelationInteractionProvider } from './elements/DiagramRelationInteraction-ctx';
-import { KeyboardCommandOutputCmp } from '../shared/commands/KeyboardCommandOutput-cmp';
-import { DiagramUIProvider } from '../shared/DiagramUI-ctx';
-import { KeyCommandDispatcherProvider } from '../shared/commands/KeyboardCommandDispatcher-ctx';
-import { PointingContextProvider } from '../shared/Pointing-ctx';
-import { SelectionProvider } from '../../../lib/Selection-ctx';
+import { useDiagramInteractionContext } from './DiagramInteraction-ctx';
+import { useCommandDispatcherContext } from '../../../lib/commands/CommandDispatcher-ctx';
+import { useDiagramDragContext } from './DiagramDrag-ctx';
+import { usePointingContext } from '../shared/Pointing-ctx';
 
 import './Diagram-cmp.css';
 
-export type DiagramProps = {};
+export const DiagramCmp: React.FC<{}> = () => {
+  const [hasMouseDown, setHasMouseDown] = useState(false);
+  const { diagram } = useDiagramInteractionContext();
+  const { setSelection } = useSelectionContext();
+  const myRef = createRef<HTMLDivElement>();
+  const { mode, setMode } = useDiagramUIContext();
+  const { setEnabled } = useCommandDispatcherContext();
+  const { onMouseMove: onMouseDragMove } = useDiagramDragContext();
+  const { setPointedLocation } = usePointingContext();
 
-export const DiagramCmp: React.FC<DiagramProps> = () => {
+  useEffect(() => {
+    setEnabled(mode !== "EDITION");
+    return () => setEnabled(true);
+  }, [mode, setEnabled]);
+
+  const onMouseDown = useCallback(() => {
+    setHasMouseDown(true);
+  }, []);
+
+  const onMouseUp = useCallback(() => {
+    setHasMouseDown(false);
+  }, []);
+
+  const onClick = useCallback(() => {
+    if (hasMouseDown) {
+      setMode('DEFAULT');
+      setSelection([]);
+    }
+    onMouseUp();
+  }, [onMouseUp, hasMouseDown, setSelection, setMode]);
+
+  const onMouseMove = useCallback((mouseEvent: MouseEvent) => {
+    if (myRef.current) {
+      const boundingRect = myRef.current.getBoundingClientRect();
+
+      onMouseDragMove(mouseEvent);
+
+      setPointedLocation([mouseEvent.clientX - boundingRect.x, mouseEvent.clientY - boundingRect.y]);
+    }
+  }, [myRef, onMouseDragMove, setPointedLocation]);
+
   const { currentFile } = useNavigatorPersistenceContext();
 
   if (!currentFile)
     return null;
 
   return (
-    <DiagramUIProvider>
-      <SelectionProvider>
-        <PointingContextProvider>
-          <DiagramPersistenceProvider diagramId={currentFile.path}>
-            <DiagramInteractionProvider>
-              <DiagramRelationInteractionProvider>
-                <DiagramPlugin>
-                  <NotePlugin>
-                    <KeyCommandDispatcherProvider>
-                      <ContextualizedDiagram />
-                      <KeyboardCommandOutputCmp />
-                    </KeyCommandDispatcherProvider>
-                  </NotePlugin>
-                </DiagramPlugin>
-              </DiagramRelationInteractionProvider>
-            </DiagramInteractionProvider>
-          </DiagramPersistenceProvider>
-        </PointingContextProvider>
-      </SelectionProvider>
-    </DiagramUIProvider>
-  );
-};
-
-const ContextualizedDiagram: React.FC<{}> = () => {
-  const [hasMouseDown, setHasMouseDown] = useState(false);
-  const { diagram } = useDiagramInteractionContext();
-  const { setSelection } = useSelectionContext();
-  const { setPointedLocation } = usePointingContext();
-  const { setMode } = useDiagramUIContext();
-  const myRef = createRef<HTMLDivElement>();
-
-  const clearSelection = useCallback(() => {
-    if (hasMouseDown) {
-      setMode('DEFAULT');
-      setSelection([]);
-    }
-    setHasMouseDown(false);
-  }, [hasMouseDown, setSelection, setMode]);
-
-  const onMouseDown = () => {
-    setHasMouseDown(true);
-  }
-
-  const onMouseMove = (mouseEvent: MouseEvent) => {
-    if (myRef.current) {
-      const boumdingRect = myRef.current.getBoundingClientRect();
-
-      setPointedLocation([
-        mouseEvent.clientX - boumdingRect.x,
-        mouseEvent.clientY - boumdingRect.y,
-        mouseEvent.movementX,
-        mouseEvent.movementY
-      ]);
-    }
-  };
-
-  return (
     diagram && (
-      <div className="diagram" ref={myRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onClick={clearSelection}>
+      <div className="diagram" ref={myRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onClick={onClick}>
         <svg>
           {diagram.elements.relations && diagram.elements.relations.map((diagramElement: DiagramElement) => (
             <DiagramRelationCmp key={diagramElement.id} {...diagramElement} />

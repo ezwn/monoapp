@@ -1,16 +1,16 @@
 import React from 'react';
 import { Command } from './Command-ctx';
-import { useKeyCommandDispatcherContext } from './KeyboardCommandDispatcher-ctx';
+import { useCommandDispatcherContext } from './CommandDispatcher-ctx';
 
-import './KeyboardCommandOutput-cmp.css';
+import './CommandStatusBar-cmp.css';
 
-export type KeyboardCommandOutputCmpProps = {};
+export type CommandStatusBarProps = {};
 
-const CandidateCmp: React.FC<{ candidate: Command }> = ({ candidate }) => <div>{candidate.title}</div>
+const CandidateCmp: React.FC<{ candidate: Command }> = ({ candidate }) => <div className='flex-1 candidate'>{candidate.title}</div>
 
-export const KeyboardCommandOutputCmp: React.FC<KeyboardCommandOutputCmpProps> = () => {
+export const CommandStatusBarCmp: React.FC<CommandStatusBarProps> = () => {
 
-    const { candidates } = useKeyCommandDispatcherContext();
+    const { sentence, candidates, enabled } = useCommandDispatcherContext();
 
     const uniqueCandidates = candidates.filter(candidate => !candidate.group);
 
@@ -21,7 +21,12 @@ export const KeyboardCommandOutputCmp: React.FC<KeyboardCommandOutputCmpProps> =
             []
         );
 
+    if (!enabled)
+        return null;
+
     return <div className='candidate-list'>
+        <div className='sentence'>{sentence}|</div>
+        { !uniqueCandidates.length && !candidateGroups.length && <div className='flex-1'></div> }
         {uniqueCandidates.map(candidate => <CandidateCmp key={candidate.shortcut} candidate={candidate} />)}
         {candidateGroups.map(candidate => <CandidateCmp key={candidate.shortcut} candidate={candidate} />)}
     </div>;

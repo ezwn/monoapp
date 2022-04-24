@@ -5,6 +5,7 @@ import { TimelinePersistenceProvider, useTimelinePersistenceContext } from './pe
 import { findRange } from './caclulation';
 import { Period, Event } from './Timeline-mdl';
 
+import './Timeline-cmp.css';
 import './Period-cmp.css';
 
 const extension = ".timeline.json"
@@ -28,7 +29,7 @@ const EventCmp: React.FC<{ event: Event, rangeBegin: number, rangeEnd: number }>
   return <div className='event-cmp' style={{ left: `${pcBegin}%` }}></div>;
 }
 
-const Timeline = () => {
+const TimelineCmp = () => {
   const { timeline } = useTimelinePersistenceContext();
 
   if (!timeline)
@@ -36,22 +37,22 @@ const Timeline = () => {
 
   const { beginning, end } = findRange(timeline);
 
-  return <div style={{ position: "relative" }}>
+  return <div className='timeline-cmp'>
     {timeline.events.map(event => <EventCmp key={event.title} event={event} rangeBegin={beginning} rangeEnd={end}>{event.title}</EventCmp>)}
     {timeline.periods.map(period => <PeriodCmp key={period.title} period={period} rangeBegin={beginning} rangeEnd={end}>{period.title}</PeriodCmp>)}
   </div>;
 }
 
-const TimelineEditorView = () => {
+const TimelineView = () => {
   const { currentFile } = useNavigatorPersistenceContext();
 
   if (!currentFile)
     return null;
 
-  return <TimelinePersistenceProvider timelineId={currentFile.path}><Timeline /></TimelinePersistenceProvider>;
+  return <TimelinePersistenceProvider timelineId={currentFile.path}><TimelineCmp /></TimelinePersistenceProvider>;
 }
 
-const mainView = () => <TimelineEditorView />;
+const mainView = () => <TimelineView />;
 
 const fileLabel: React.FC<{ file: File }> = ({ file }) => <>
   {file.name.substring(0, file.name.length - extension.length)}

@@ -25,8 +25,8 @@ export const WorldView: React.FC = () => {
   const { currentPath } = useNavigatorPersistenceContext();
   useEffect(() => {
     if (worldRenderer && currentPath) {
-      for (let c = 0; c < 4; c++) {
-        for (let l = 0; l < 4; l++) {
+      for (let c = 0; c < 2; c++) {
+        for (let l = 0; l < 2; l++) {
           worldRenderer.enableWorldAreaRendering(currentPath, c, l, 0);
         }
       }
