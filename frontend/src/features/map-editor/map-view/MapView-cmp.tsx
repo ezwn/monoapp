@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { CanvasLayer } from './CanvasLayer-cmp';
-import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
 import { MapViewContextProvider, useMapViewContext } from './MapView-ctxt';
 import { generateWorld } from '../lib/map/Map';
 

@@ -1,4 +1,4 @@
-import { pathToUrl, saveFileWithContentType, saveJSONFile } from '../../../../lib/fs4webapp-client';
+import { pathToFileUrl, saveFileWithContentType, saveJSONFile } from '../../../../lib/fs4webapp-client';
 import { areaSideSize, areaTerrainResolution, saveElement, ThreeDWorldAreaData } from '../../../../lib/world/persistence';
 import { Map, NumberRange } from './persistence';
 
@@ -97,7 +97,7 @@ export const runGenerators = async (
     for (let generator of mapHandler.map.generators) {
       const { imagePath, count, size: { width, height }, scale, rotation } = generator;
       const img = document.createElement('img');
-      img.src = pathToUrl(`${currentPath}/${imagePath}`);
+      img.src = pathToFileUrl(`${currentPath}/${imagePath}`);
       await img.decode();
       for (let i = 0; i < count; i++) {
         const x = canvasWidth * Math.random();

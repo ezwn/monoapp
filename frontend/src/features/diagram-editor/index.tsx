@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { File } from '../../lib/fs4webapp-client';
+import { FS4JFile, fileToTitle } from '../../lib/fs4webapp-client';
 import { DiagramCmp } from './diagram/Diagram-cmp';
 import { DiagramInteractionProvider } from './diagram/DiagramInteraction-ctx';
 import { DiagramPersistenceProvider } from './diagram/DiagramPersistence-ctx';
@@ -9,8 +9,9 @@ import { DiagramRelationInteractionProvider } from './diagram/elements/DiagramRe
 import { DiagramUIProvider } from './shared/DiagramUI-ctx';
 import { PointingContextProvider } from './shared/Pointing-ctx';
 import { SelectionProvider } from '../../lib/Selection-ctx';
-import { useNavigatorPersistenceContext } from '../navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../../lib/file-browsing/NavigatorPersistence-ctx';
 import { DiagramDragProvider } from './diagram/DiagramDrag-ctx';
+import { FileLabelCmp } from '../../lib/file-browsing/FileLabel-cmp';
 
 const extension = ".dia.json"
 
@@ -22,8 +23,9 @@ const GlobalProvider: React.FC<{}> = ({ children }) => {
 
   const { currentFile } = useNavigatorPersistenceContext();
 
-  if (!currentFile)
+  if (!currentFile) {
     return <>{children}</>;
+  }
 
   return <DiagramUIProvider>
     <SelectionProvider>
@@ -44,12 +46,15 @@ const GlobalProvider: React.FC<{}> = ({ children }) => {
   </DiagramUIProvider>;
 };
 
-const fileLabel: React.FC<{ file: File }> = ({ file }) => <>
-  {file.name.substring(0, file.name.length - extension.length)}
-</>;
+const extractTitle = fileToTitle(extension);
 
-export const fileConfigFor = (file: File) => file.name.endsWith(extension) ? {
-  fileLabel,
+const fileLabelCmp: React.FC<{ file: FS4JFile }> = ({ file }) =>
+  <FileLabelCmp fileTitle={extractTitle(file)} />;
+
+export const fileConfigFor = (file: FS4JFile) => file.name.endsWith(extension) ? {
+  tabTitle: extractTitle,
+  fileLabelCmp,
+  closable: false,
   mainView,
   withGlobalProvider: (jsx: ReactNode) => <GlobalProvider>{jsx}</GlobalProvider>
 } : null;

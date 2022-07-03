@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createHookBasedContext } from '../../../lib/react-utils/createHookBasedContext';
+import { createHookBasedContext, useContextValueObject } from '../../../lib/react-utils/createHookBasedContext';
 
 export type DiagramUIProps = {};
 
@@ -17,7 +17,7 @@ const defaultValue: DiagramUIValue = {
 
 const useDiagramUI: (props: DiagramUIProps) => DiagramUIValue = () => {
   const [mode, setMode] = useState(defaultValue.mode);
-  return { mode, setMode };
+  return useContextValueObject({ mode, setMode }, defaultValue) as DiagramUIValue;
 };
 
 const hookBasedContext = createHookBasedContext(useDiagramUI, defaultValue);

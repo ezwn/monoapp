@@ -22,7 +22,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { vertexShader, fragmentShader } from "./shaders";
 import { areaSideSize, areaTerrainResolution } from '../../../../lib/world/persistence';
-import { pathToUrl } from '../../../../lib/fs4webapp-client';
+import { pathToFileUrl } from '../../../../lib/fs4webapp-client';
 
 export class GLRenderer {
 
@@ -71,8 +71,8 @@ export class GLRenderer {
 }
 
 export const createAreaTerrain = async (worldPath: string, x: number, y: number, z: number): Promise<Mesh | null> => {
-  const heightMapFile = pathToUrl(`${worldPath}/areas/${x}x${y}x${z}.png`);
-  const textureFile = pathToUrl(`${worldPath}/areas/ground.png`);
+  const heightMapFile = pathToFileUrl(`${worldPath}/areas/${x}x${y}x${z}.png`);
+  const textureFile = pathToFileUrl(`${worldPath}/areas/ground.png`);
   const heightMap: Texture = new TextureLoader().load(heightMapFile);
   const texture: Texture = new TextureLoader().load(textureFile);
 

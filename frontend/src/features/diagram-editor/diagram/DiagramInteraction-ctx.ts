@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { createHookBasedContext } from '../../../lib/react-utils/createHookBasedContext';
+import { createHookBasedContext, useContextValueObject } from '../../../lib/react-utils/createHookBasedContext';
 import { Diagram, DiagramElement } from './Diagram-mdl';
 import { useDiagramPersistenceContext } from './DiagramPersistence-ctx';
 
@@ -8,7 +8,7 @@ export type DiagramInteractionProps = {};
 export type AddDiagramElementFn = <T extends DiagramElement>(category: string, element: T) => void;
 export type SelectDiagramElementFn = (selectFn: (e: DiagramElement) => boolean) => DiagramElement[];
 
-export type IDiagramInteractionValue = {
+export type DiagramInteractionValue = {
   diagram: Diagram | null;
   keepElements(filterFn: (e: DiagramElement) => boolean): void;
   selectElements(selectFn: (e: DiagramElement) => boolean): DiagramElement[];
@@ -17,7 +17,7 @@ export type IDiagramInteractionValue = {
   patchElement<T extends DiagramElement>(category: string, id: string, patch: Partial<T>): void;
 };
 
-const defaultValue: IDiagramInteractionValue = {
+const defaultValue: DiagramInteractionValue = {
   diagram: null,
   keepElements: () => null,
   selectElements: () => [],
@@ -26,7 +26,7 @@ const defaultValue: IDiagramInteractionValue = {
   patchElement: () => { },
 };
 
-const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInteractionValue = () => {
+const useDiagramInteraction: (props: DiagramInteractionProps) => DiagramInteractionValue = () => {
   const { diagram, saveDiagram } = useDiagramPersistenceContext();
 
   const selectElements: SelectDiagramElementFn = useCallback((selectFn) => {
@@ -36,10 +36,10 @@ const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInterac
       .flatMap((entry) => entry[1].filter(selectFn));
   }, [diagram]);
 
-  const mapElements = useCallback((mapFn: (e: DiagramElement) => DiagramElement): void => {
+  const mapElements = useCallback(async (mapFn: (e: DiagramElement) => DiagramElement): Promise<void> => {
     if (!diagram) return;
 
-    saveDiagram({
+    await saveDiagram({
       ...diagram,
       elements: Object.entries(diagram.elements)
         .map((entry) => [entry[0], entry[1].map(mapFn)] as [string, DiagramElement[]])
@@ -47,10 +47,10 @@ const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInterac
     });
   }, [diagram, saveDiagram]);
 
-  const keepElements = useCallback((filterFn: (e: DiagramElement) => boolean): void => {
+  const keepElements = useCallback(async (filterFn: (e: DiagramElement) => boolean): Promise<void> => {
     if (!diagram) return;
 
-    saveDiagram({
+    await saveDiagram({
       ...diagram,
       elements: Object.entries(diagram.elements)
         .map((entry) => [entry[0], entry[1].filter(filterFn)] as [string, DiagramElement[]])
@@ -58,10 +58,10 @@ const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInterac
     });
   }, [diagram, saveDiagram]);
 
-  const addElement: AddDiagramElementFn = useCallback((category, element): void => {
+  const addElement: AddDiagramElementFn = useCallback(async (category, element): Promise<void> => {
     if (!diagram) return;
 
-    saveDiagram({
+    await saveDiagram({
       ...diagram,
       elements: {
         ...diagram.elements,
@@ -70,10 +70,10 @@ const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInterac
     });
   }, [diagram, saveDiagram]);
 
-  const patchElement = useCallback(<T extends DiagramElement>(category: string, id: string, patch: Partial<T>): void => {
+  const patchElement = useCallback(async <T extends DiagramElement>(category: string, id: string, patch: Partial<T>): Promise<void> => {
     if (!diagram) return;
 
-    saveDiagram({
+    await saveDiagram({
       ...diagram,
       elements: {
         ...diagram.elements,
@@ -82,7 +82,7 @@ const useDiagramInteraction: (props: DiagramInteractionProps) => IDiagramInterac
     });
   }, [diagram, saveDiagram]);
 
-  return { diagram, patchElement, addElement, keepElements, mapElements, selectElements };
+  return useContextValueObject({ diagram, patchElement, addElement, keepElements, mapElements, selectElements }, defaultValue) as DiagramInteractionValue;
 };
 
 const hookBasedContext = createHookBasedContext(useDiagramInteraction, defaultValue);

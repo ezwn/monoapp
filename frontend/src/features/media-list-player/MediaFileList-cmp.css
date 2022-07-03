@@ -1,0 +1,12 @@
+
+.media-file-list-cmp {
+    padding: 20px;
+}
+
+.media-file-cmp {
+    margin-bottom: 10px;
+}
+
+.media-file-cmp.playing {
+    font-weight: bold;
+}

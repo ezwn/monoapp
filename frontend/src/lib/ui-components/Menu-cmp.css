@@ -1,6 +1,7 @@
 .menu {
   display: flex;
   background-color:  rgb(36, 36, 36);
+  flex-wrap: wrap;
 }
 
 .item {

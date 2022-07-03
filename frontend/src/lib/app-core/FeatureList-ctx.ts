@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { File } from '../fs4webapp-client';
+import { FS4JFile } from '../fs4webapp-client';
 import { createHookBasedContext } from '../react-utils/createHookBasedContext';
 import { FileBasedFeature } from './FileBasedFeature';
 
@@ -8,7 +8,7 @@ export type FeatureListProps = {
 };
 
 export type FeatureListValue = {
-  findFileFeature: (currentFile: File) => FileBasedFeature | null;
+  findFileFeature: (currentFile: FS4JFile) => FileBasedFeature | null;
   features: FileBasedFeature[];
 };
 
@@ -19,7 +19,7 @@ const defaultValue: FeatureListValue = {
 
 const useFeatureList: (props: FeatureListProps) => FeatureListValue = ({ features }) => {
 
-  const findFileFeature = useCallback((currentFile: File) => features
+  const findFileFeature = useCallback((currentFile: FS4JFile) => features
     .find(feature => feature.fileConfigFor(currentFile) !== null) || null, [features]);
 
   return { findFileFeature, features };

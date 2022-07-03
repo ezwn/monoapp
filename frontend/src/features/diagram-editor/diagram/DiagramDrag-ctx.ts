@@ -1,4 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
+import { pushState } from '../../../lib/git';
 import { createHookBasedContext } from '../../../lib/react-utils/createHookBasedContext';
 import { useSelectionContext } from '../../../lib/Selection-ctx';
 import { useDiagramUIContext } from '../shared/DiagramUI-ctx';
@@ -10,8 +12,8 @@ export type DragProps = {
 
 export type DragValue = {
   startDragging: () => void;
-  onMouseMove: (event: MouseEvent) => void;
-  stopDragging: () => boolean;
+  onMouseMove?: (event: MouseEvent) => void;
+  stopDragging?: () => boolean;
 };
 
 const defaultValue: DragValue = {
@@ -20,10 +22,11 @@ const defaultValue: DragValue = {
   stopDragging: () => false
 };
 
-const useDrag: (props: DragProps) => DragValue = () => {
+const useDragValue: (props: DragProps) => DragValue = () => {
   const { mode, setMode } = useDiagramUIContext();
   const { selection } = useSelectionContext();
   const { mapElements } = useDiagramInteractionContext();
+  const { currentFile } = useNavigatorPersistenceContext();
 
   const [draggingDistance, setDraggingDistance] = useState<number>(0);
   const cumulMovementX = useRef<number>(0);
@@ -62,10 +65,10 @@ const useDrag: (props: DragProps) => DragValue = () => {
           };
         }
 
-        setDraggingDistance(draggingDistance + Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2)));
-
         return element;
       });
+
+      setDraggingDistance(draggingDistance + Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2)));
     }
   }, [cumulMovementX, cumulMovementY, selection, mapElements, draggingDistance]);
 
@@ -82,13 +85,18 @@ const useDrag: (props: DragProps) => DragValue = () => {
   const stopDragging = useCallback(() => {
     const hasDragged = mode === 'DRAG' && draggingDistance >= 2;
     setDraggingDistance(0);
-    return hasDragged;
-  }, [draggingDistance, mode]);
 
-  return { startDragging, onMouseMove, stopDragging };
+    if (hasDragged) {
+      pushState(currentFile, "Drag element(s)");
+    }
+
+    return hasDragged;
+  }, [draggingDistance, mode, currentFile]);
+
+  return { startDragging, onMouseMove: isDragging ? onMouseMove : undefined, stopDragging: isDragging ? stopDragging : undefined };
 };
 
-const hookBasedContext = createHookBasedContext(useDrag, defaultValue);
+const hookBasedContext = createHookBasedContext(useDragValue, defaultValue);
 
 export const DiagramDragProvider = hookBasedContext.Provider;
 export const useDiagramDragContext = hookBasedContext.useContext;

@@ -1,4 +1,4 @@
-import { loadFile, loadFileNull, pathToUrl, saveJSONFile } from "../fs4webapp-client";
+import { loadFile, loadFileNull, pathToFileUrl, saveJSONFile } from "../fs4webapp-client";
 
 export const areaSideSize = 100.0;
 export const areaTerrainResolution = 128;
@@ -50,7 +50,7 @@ export const loadModule = async (worldPath: string, elementId: string): Promise<
 
     return {
         ...fileContent,
-        moduleDirectory: pathToUrl(moduleDirectory)
+        moduleDirectory: pathToFileUrl(moduleDirectory)
     };
 }
 

@@ -5,6 +5,8 @@ import { DiagramRelation, DiagramText, EndDecoration, instanceOfDiagramRelation,
 import { useDiagramInteractionContext } from './DiagramInteraction-ctx';
 import { useDiagramRelationInteractionContext } from './elements/DiagramRelationInteraction-ctx';
 import { Command, CommandProvider } from '../../../lib/commands/Command-ctx';
+import { pushState, pushStateShortDebounced } from '../../../lib/git';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
 
 
 export const DiagramPlugin: React.FC<{}> = ({ children }) => {
@@ -12,6 +14,7 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
   const { selection } = useSelectionContext();
   const { keepElements, mapElements, selectElements } = useDiagramInteractionContext();
   const { createRelation, selectRelation } = useDiagramRelationInteractionContext();
+  const { currentFile } = useNavigatorPersistenceContext();
 
   const [commands, setCommands] = useState<Command[]>([]);
 
@@ -24,11 +27,11 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
     const changeRelationEndDecoration = (shortcut: string, decoration?: EndDecoration) => ({
       group: 'd{et|ft|er|fr|xx}',
       shortcut,
-      title: <>d&#123;et|ft|er|fr&#125;. Change decoration</>,
+      title: <>d&#123;et|ft|er|fr|xx&#125;. Change decoration</>,
       isAvailable: () => isRelationEnd,
-      execute: () => {
+      execute: async () => {
         if (pointedElement) {
-          mapElements(
+          await mapElements(
             (element) => {
               if (!instanceOfDiagramRelation(element))
                 return element;
@@ -45,6 +48,8 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
               };
             }
           );
+
+          pushState(currentFile, 'Change relation end decoration');
         }
       }
     });
@@ -54,9 +59,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
       shortcut,
       title: <>sd&#123;c|r1|r2&#125;. Change shape</>,
       isAvailable: () => pointedDiagramElement && instanceOfDiagramRelation(pointedDiagramElement),
-      execute: () => {
+      execute: async () => {
         if (pointedElement) {
-          mapElements(
+          await mapElements(
             (element) => {
               if (element.id !== pointedElement)
                 return element;
@@ -67,6 +72,8 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
               };
             }
           );
+
+          pushState(currentFile, 'Change relation shape');
         }
       }
     });
@@ -79,11 +86,13 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
         shortcut: 'd',
         title: <>d. Delete</>,
         isAvailable: () => !!pointedDiagramElement && !referredFromRelation,
-        execute: () => {
+        execute: async () => {
           if (pointedElement) {
-            keepElements(
+            await keepElements(
               (element) => element.id !== pointedElement
             );
+
+            pushState(currentFile, 'Delete element');
           }
         }
       },
@@ -91,9 +100,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
         shortcut: 'l',
         title: <>l. Larger text</>,
         isAvailable: () => !!pointedDiagramElement && instanceOfDiagramText(pointedDiagramElement),
-        execute: () => {
+        execute: async () => {
           if (pointedElement) {
-            mapElements(
+            await mapElements(
               (element) => {
                 if (element.id !== pointedElement)
                   return element;
@@ -102,8 +111,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
 
                 return { ...element, fontSize: fontSize + 2 };
               }
-
             );
+
+            pushStateShortDebounced(currentFile, 'Larger text');
           }
         }
       },
@@ -111,8 +121,8 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
         shortcut: 's',
         title: <>s. Smaller text</>,
         isAvailable: () => !!pointedDiagramElement && instanceOfDiagramText(pointedDiagramElement),
-        execute: () => {
-          if (pointedElement) mapElements(
+        execute: async () => {
+          if (pointedElement) await mapElements(
             (element) => {
               if (element.id !== pointedElement)
                 return element;
@@ -122,23 +132,24 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
               return { ...element, fontSize: fontSize - 2 };
             }
           );
+
+          pushStateShortDebounced(currentFile, 'Smaller text');
         }
       },
       {
         shortcut: 'r',
         title: <>r. Create relation</>,
         isAvailable: () => !isRelationEnd && selection.length > 1,
-        execute: () => {
-          createRelation();
+        execute: async () => {
+          await createRelation();
+          pushState(currentFile, 'Create relation');
         }
       },
       {
         shortcut: 'r',
         title: <>r. Select relation</>,
         isAvailable: () => isRelationEnd,
-        execute: () => {
-          selectRelation();
-        }
+        execute: selectRelation
       },
       changeRelationShape('sc', 'CENTROID'),
       changeRelationShape('sr1', 'RIGHT_ANGLE_1'),
@@ -152,9 +163,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
         shortcut: 'm99',
         title: <>m99. Attach to center</>,
         isAvailable: () => isRelationEnd,
-        execute: () => {
+        execute: async () => {
           if (pointedElement) {
-            mapElements(
+            await mapElements(
               (element) => {
                 if (!instanceOfDiagramRelation(element))
                   return element;
@@ -171,6 +182,8 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
                 };
               }
             );
+
+            pushState(currentFile, 'Change relation end attach point');
           }
         }
       }
@@ -182,9 +195,9 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
         shortcut: i < 10 ? `m0${i}` : `m${i}`,
         title: <>m[00-11]. Attach to...</>,
         isAvailable: () => isRelationEnd,
-        execute: () => {
+        execute: async () => {
           if (pointedElement) {
-            mapElements(
+            await mapElements(
               (element) => {
                 if (!instanceOfDiagramRelation(element))
                   return element;
@@ -201,6 +214,8 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
                 };
               }
             );
+
+            pushState(currentFile, 'Change relation end attach point');
           }
         }
       });
@@ -208,7 +223,7 @@ export const DiagramPlugin: React.FC<{}> = ({ children }) => {
 
     setCommands(newCommands);
 
-  }, [createRelation, mapElements, selectRelation, keepElements, pointedLocation, pointedElement, selection, selectElements]);
+  }, [createRelation, mapElements, selectRelation, keepElements, pointedLocation, pointedElement, selection, selectElements, currentFile]);
 
   return <CommandProvider commands={commands}>{children}</CommandProvider>;
 };

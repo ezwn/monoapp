@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createHookBasedContext } from '../../../lib/react-utils/createHookBasedContext';
+import { createHookBasedContext, useContextValueObject } from '../../../lib/react-utils/createHookBasedContext';
 
 export type PointingContextProps = {};
 
@@ -20,7 +20,7 @@ const defaultValue: PointingContextValue = {
 const usePointingContextFN: (props: PointingContextProps) => PointingContextValue = () => {
   const [pointedElement, setPointedElement] = useState(defaultValue.pointedElement);
   const [pointedLocation, setPointedLocation] = useState(defaultValue.pointedLocation);
-  return { pointedElement, setPointedElement, pointedLocation, setPointedLocation };
+  return useContextValueObject({ pointedElement, setPointedElement, pointedLocation, setPointedLocation }, defaultValue) as PointingContextValue;
 };
 
 const hookBasedContext = createHookBasedContext(usePointingContextFN, defaultValue);

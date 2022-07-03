@@ -1,0 +1,27 @@
+.table {
+  display: flex;
+  flex-direction: row;
+  background-color:  rgb(36, 36, 36);
+  flex-wrap: wrap;
+}
+
+.item {
+  cursor: pointer;
+  padding: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-left: 4px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  border-radius: 10px;
+  border: solid 1px transparent;
+  color: white;
+}
+
+.item:hover {
+  background-color: rgb(65, 65, 65);
+}
+
+.selected {
+  background-color: rgb(56, 0, 0) !important;
+}

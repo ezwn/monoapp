@@ -1,45 +1,40 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useFeatureListContext } from '../../lib/app-core/FeatureList-ctx';
-import { FileTypeConfig } from '../../lib/app-core/FileBasedFeature';
-import { File } from '../../lib/fs4webapp-client';
+import { DynamicFileLabel } from '../../lib/file-browsing/DynamicFileLabel-cmp';
 import { MenuCmp, MenuItem } from '../../lib/ui-components/Menu-cmp';
+import { useNavigatorPersistenceContext } from '../../lib/file-browsing/NavigatorPersistence-ctx';
 
-import { useNavigatorPersistenceContext } from './NavigatorPersistence-ctx';
+export type NavigatorCmpProps = {};
 
-export type DiagramProps = {};
-
-const FileLabel: React.FC<{ file: File }> = ({ file }) => {
-  const { findFileFeature } = useFeatureListContext();
-  const [fileConfig, setFileConfig] = useState<FileTypeConfig | null>(null);
-
-  useEffect(() => {
-    setFileConfig(findFileFeature(file)?.fileConfigFor(file) || null);
-  }, [findFileFeature, file]);
-
-  return <>{fileConfig ? <fileConfig.fileLabel file={file} /> : <>{file.name}</>}</>;
-}
-
-export const NavigatorCmp: React.FC<DiagramProps> = () => {
+export const NavigatorCmp: React.FC<NavigatorCmpProps> = () => {
   const { files, setTarget, currentFile, currentPath, gotoParentPath } = useNavigatorPersistenceContext();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  useEffect(() => {
-    let items = files.map(
-      file => ({
-        value: file.path,
-        label: <FileLabel file={file} />
-      })
-    );
+  const directoriesOnly = false;
 
-    if (currentPath) {
-      items = [{
-        value: "UP",
-        label: <>..</>
-      }, ...items];
-    }
+  useEffect(() => {
+    let items = currentPath ? [{
+      value: "UP",
+      label: <>..</>
+    }] : [];
+
+
+    items = [
+      ...items,
+      ...files.filter(file => file.isDirectory).map(
+        file => ({
+          value: file.path,
+          label: <DynamicFileLabel file={file} />
+        })
+      ), ...files.filter(file => !file.isDirectory).map(
+        file => ({
+          value: file.path,
+          label: <DynamicFileLabel file={file} />
+        })
+      )];
+
 
     setMenuItems(items);
-  }, [files, currentPath]);
+  }, [files, currentPath, directoriesOnly]);
 
   const onClick = useCallback((selectedPath: string) => {
 

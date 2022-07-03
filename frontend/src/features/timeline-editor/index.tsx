@@ -1,12 +1,13 @@
 import React from 'react';
-import { File } from '../../lib/fs4webapp-client';
-import { useNavigatorPersistenceContext } from '../navigator/NavigatorPersistence-ctx';
+import { FS4JFile, fileToTitle } from '../../lib/fs4webapp-client';
+import { useNavigatorPersistenceContext } from '../../lib/file-browsing/NavigatorPersistence-ctx';
 import { TimelinePersistenceProvider, useTimelinePersistenceContext } from './persistence/TimelinePersistence-ctx';
 import { findRange } from './caclulation';
 import { Period, Event } from './Timeline-mdl';
 
 import './Timeline-cmp.css';
 import './Period-cmp.css';
+import { FileLabelCmp } from '../../lib/file-browsing/FileLabel-cmp';
 
 const extension = ".timeline.json"
 
@@ -54,11 +55,14 @@ const TimelineView = () => {
 
 const mainView = () => <TimelineView />;
 
-const fileLabel: React.FC<{ file: File }> = ({ file }) => <>
-  {file.name.substring(0, file.name.length - extension.length)}
-</>;
+const extractTitle = fileToTitle(extension);
 
-export const fileConfigFor = (file: File) => file.name.endsWith(extension) ? {
-  fileLabel,
+const fileLabelCmp: React.FC<{ file: FS4JFile }> = ({ file }) =>
+  <FileLabelCmp fileTitle={extractTitle(file)} />;
+
+export const fileConfigFor = (file: FS4JFile) => file.name.endsWith(extension) ? {
+  fileLabelCmp,
+  tabTitle: extractTitle,
+  closable: false,
   mainView
 } : null;

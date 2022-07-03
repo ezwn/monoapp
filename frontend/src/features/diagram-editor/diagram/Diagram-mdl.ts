@@ -1,5 +1,5 @@
 export interface Diagram {
-  title: string;
+  title?: string;
   elements: ElementMap;
 }
 

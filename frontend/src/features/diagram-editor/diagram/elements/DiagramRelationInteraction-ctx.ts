@@ -1,4 +1,4 @@
-import { createHookBasedContext } from "../../../../lib/react-utils/createHookBasedContext";
+import { createHookBasedContext, useContextValueObject } from "../../../../lib/react-utils/createHookBasedContext";
 import { generateRandomTextId } from "../../../../lib/js-utils/generateRandomTextId";
 import { usePointingContext } from "../../shared/Pointing-ctx";
 import { useSelectionContext } from "../../../../lib/Selection-ctx";
@@ -8,15 +8,15 @@ import { useCallback } from "react";
 
 export type DiagramRelationInteractionProps = {};
 
-export type IDiagramRelationInteractionValue = {
+export type DiagramRelationInteractionValue = {
 
-  createRelation: () => boolean;
+  createRelation: () => Promise<boolean>;
 
   selectRelation: () => void;
 };
 
-const defaultValue: IDiagramRelationInteractionValue = {
-  createRelation: () => true,
+const defaultValue: DiagramRelationInteractionValue = {
+  createRelation: () => Promise.resolve(true),
   selectRelation: () => undefined,
 };
 
@@ -29,18 +29,18 @@ const filterRelationContainsEndById = (endId: string) => (element: DiagramElemen
   return relation.ends.some(end => end.id === endId);
 }
 
-const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) => IDiagramRelationInteractionValue = () => {
+const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) => DiagramRelationInteractionValue = () => {
 
   const { selection } = useSelectionContext();
   const { pointedElement, setPointedElement } = usePointingContext();
   const { addElement, selectElements } = useDiagramInteractionContext();
 
-  const createRelation = useCallback((): boolean => {
+  const createRelation = useCallback(async (): Promise<boolean> => {
     if (selection.length < 2)
       return false;
 
     const id = 'RELATION-' + generateRandomTextId(8);
-    addElement('relations', {
+    await addElement('relations', {
       id,
       attachPointNumber: 99,
       shape: 'CENTROID',
@@ -50,7 +50,7 @@ const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) =>
     return true;
   }, [selection, addElement]);
 
-  const selectRelation = useCallback(() => {
+  const selectRelation = useCallback((): void => {
     if (pointedElement) {
       const relations = selectElements(filterRelationContainsEndById(pointedElement));
       if (relations.length === 1) {
@@ -60,7 +60,7 @@ const useDiagramRelationInteraction: (props: DiagramRelationInteractionProps) =>
     }
   }, [pointedElement, selectElements, setPointedElement]);
 
-  return { createRelation, selectRelation };
+  return useContextValueObject({ createRelation, selectRelation }, defaultValue) as DiagramRelationInteractionValue;
 };
 
 const hookBasedContext = createHookBasedContext(useDiagramRelationInteraction, defaultValue);

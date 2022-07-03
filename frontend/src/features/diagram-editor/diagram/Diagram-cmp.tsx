@@ -3,7 +3,7 @@ import React, { createRef, MouseEvent, useCallback, useEffect, useState } from '
 import { DiagramElement } from './Diagram-mdl';
 import { useSelectionContext } from '../../../lib/Selection-ctx';
 import { NoteCmp } from '../diagram-notes/Note-cmp';
-import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
 import { useDiagramUIContext } from '../shared/DiagramUI-ctx';
 import { DiagramRelationCmp } from './elements/DiagramRelation-cmp';
 import { useDiagramInteractionContext } from './DiagramInteraction-ctx';
@@ -46,33 +46,33 @@ export const DiagramCmp: React.FC<{}> = () => {
 
   const onMouseMove = useCallback((mouseEvent: MouseEvent) => {
     if (myRef.current) {
+      if (onMouseDragMove) {
+        onMouseDragMove(mouseEvent);
+      }
       const boundingRect = myRef.current.getBoundingClientRect();
-
-      onMouseDragMove(mouseEvent);
-
       setPointedLocation([mouseEvent.clientX - boundingRect.x, mouseEvent.clientY - boundingRect.y]);
     }
+
   }, [myRef, onMouseDragMove, setPointedLocation]);
 
   const { currentFile } = useNavigatorPersistenceContext();
 
-  if (!currentFile)
+  if (!currentFile || !diagram) {
     return null;
+  }
 
   return (
-    diagram && (
-      <div className="diagram" ref={myRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onClick={onClick}>
-        <svg>
-          {diagram.elements.relations && diagram.elements.relations.map((diagramElement: DiagramElement) => (
-            <DiagramRelationCmp key={diagramElement.id} {...diagramElement} />
-          ))}
-        </svg>
-        <div>
-          {diagram.elements.notes.map((diagramElement: DiagramElement) => (
-            <NoteCmp key={diagramElement.id} {...diagramElement} />
-          ))}
-        </div>
+    <div className="diagram" ref={myRef} onMouseDown={onMouseDown} onMouseMove={onMouseMove} onClick={onClick}>
+      <svg>
+        {diagram.elements.relations && diagram.elements.relations.map((diagramElement: DiagramElement) => (
+          <DiagramRelationCmp key={diagramElement.id} {...diagramElement} />
+        ))}
+      </svg>
+      <div>
+        {diagram.elements.notes.map((diagramElement: DiagramElement) => (
+          <NoteCmp key={diagramElement.id} {...diagramElement} />
+        ))}
       </div>
-    )
+    </div>
   );
 };

@@ -1,0 +1,18 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          monoapp
+# Required-Start:    $all
+# Required-Stop:
+# Default-Start:     3
+# Default-Stop:
+# Short-Description: monoapp server
+### END INIT INFO
+case "$1" in
+  start)
+    # Executes our script
+    sudo sh /opt/monoapp/start.sh
+    ;;
+  *)
+    ;;
+esac
+exit 0

@@ -4,6 +4,10 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import packageJson from '../package.json';
+
+console.log(packageJson.version);
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

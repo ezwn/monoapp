@@ -6,42 +6,65 @@
 .text * {
   color: rgb(228, 228, 228);
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-  font-size: 20px;
 }
 
 .text .content {
-  padding: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   cursor: default;
+  font-size: 20px;
+}
+
+.text .content ul, .text .content ol {
+  margin: 0;
+  padding-left: 35px;
+  padding-right: 8px;
+}
+
+.text .content p, .text .content h1, .text .content h2, .text .content h3, .text .content pre {
+  margin: 0;
+  margin-left: 8px;
+  margin-right: 8px;
   text-align: center;
 }
 
-.text .content .t1 {
+.content.left p, .content.left h1, .content.left h2, .content.left h3, .content.left pre {
+  text-align: left;
+}
+
+.text .content p {
+  font-size: 100%;
+}
+
+.text .content h1 {
   font-size: 160%;
 }
 
-.text .content .t2 {
+.text .content h2 {
   font-size: 140%;
 }
 
-.text .content .t3 {
+.text .content h3 {
   font-size: 120%;
 }
 
-.text .content .warning {
-  font-size: 120%;
+.text .content strong {
+  font-size: inherit;
   font-weight: bold;
   color: rgb(255, 120, 120);
 }
 
-.text .content .left {
+
+.text .simple-down {
+  text-align: center;
+}
+
+.text .simple-down .left {
+  font-size: 100%;
   text-align: left;
 }
 
-.text .content .line {
-  font-size: 100%;
-}
-
-.text .content .hr {
+.text .simple-down .hr {
   border-bottom: solid 1px rgb(228, 228, 228);
   margin-top: 8px;
   margin-bottom: 8px;
@@ -49,26 +72,25 @@
   margin-right: -8px;
 }
 
-.text .edition-content {
-  padding: 8px;
-  white-space: pre-wrap;
-  text-align: center;
-}
-
 .text textarea {
   position: absolute;
 
+  white-space: pre-wrap;
+  text-align: center;
+
   padding: 8px;
-  border: none;
-  background: none;
+  color: rgb(230, 230, 230);
+
   resize: none;
   box-shadow: none;
   outline: none;
 
   box-sizing: border-box;
   overflow: hidden;
-  width: 100%;
-  height: 100%;
+  width: 120%;
+  height: 120%;
+  left: -10%;
+  top: -10%;
   min-width: 10px;
   word-wrap: normal;
 

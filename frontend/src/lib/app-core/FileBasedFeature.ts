@@ -1,12 +1,14 @@
 import { ReactNode } from "react";
-import { File } from "../fs4webapp-client";
+import { FS4JFile } from "../fs4webapp-client";
 
 export interface FileTypeConfig {
-    fileLabel: React.FC<{ file: File }>;
+    tabTitle: (file: FS4JFile) => string;
+    fileLabelCmp: React.FC<{ file: FS4JFile }>;
     mainView: React.FC;
     withGlobalProvider?: (node: ReactNode) => ReactNode;
+    closable: boolean;
 }
 
 export interface FileBasedFeature {
-    fileConfigFor: (file: File) => FileTypeConfig | null;
+    fileConfigFor: (file: FS4JFile) => FileTypeConfig | null;
 }

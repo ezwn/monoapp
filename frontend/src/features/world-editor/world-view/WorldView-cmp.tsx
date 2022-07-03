@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
 
 import { WorldRenderer } from '../lib/world-renderer';
 

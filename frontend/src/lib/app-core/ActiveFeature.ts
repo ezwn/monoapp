@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigatorPersistenceContext } from '../../features/navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../file-browsing/NavigatorPersistence-ctx';
 import { createHookBasedContext } from '../react-utils/createHookBasedContext';
 import { useFeatureListContext } from './FeatureList-ctx';
 import { FileBasedFeature, FileTypeConfig } from './FileBasedFeature';
@@ -32,8 +32,12 @@ const useActiveFeature: (props: ActiveFeatureProps) => ActiveFeatureValue = () =
 
     const fileFeature = findFileFeature(currentFile);
     setActiveFeature(fileFeature);
-    setActiveFileConfig(fileFeature!.fileConfigFor(currentFile));
+    const config = fileFeature!.fileConfigFor(currentFile);
+    setActiveFileConfig(config);
     
+    if (config)
+      document.title = config.tabTitle(currentFile);
+
   }, [currentFile, findFileFeature])
 
   return { activeFeature, activeFileConfig };

@@ -1,23 +1,25 @@
 {
   "name": "fs4webapp",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "description": "",
   "main": "build/index.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "BE_PORT=8080 node .",
-    "start:prod": "BE_PORT=8081 node .",
+    "start": "BE_DATAPATH=/home/nicolas/Code/monoapp/test-data BE_PORT=8080 node .",
+    "start:prod": "BE_DATAPATH=/var/monoapp BE_PORT=8080 node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/multer": "^1.4.7",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigatorPersistenceContext } from '../../navigator/NavigatorPersistence-ctx';
+import { useNavigatorPersistenceContext } from '../../../lib/file-browsing/NavigatorPersistence-ctx';
 import { renderHeightMapToCanvas, runGenerators } from '../lib/map/Map';
 import { imageSize, useMapViewContext } from './MapView-ctxt';
 
