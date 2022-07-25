@@ -1,0 +1,54 @@
+{
+  "elements": {
+    "notes": [
+      {
+        "id": "NOTE-7ntb54pU",
+        "userBounds": [
+          371,
+          23,
+          null
+        ],
+        "content": "Hello",
+        "bounds": [
+          371,
+          23,
+          63.784725189208984,
+          41.52777862548828
+        ]
+      },
+      {
+        "id": "NOTE-sy7QSrZN",
+        "userBounds": [
+          517,
+          137,
+          null
+        ],
+        "content": "Hello\nWorld\n---\n2",
+        "bounds": [
+          517,
+          137,
+          70.06945037841797,
+          110.41667175292969
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "id": "RELATION-tWx3fUUz",
+        "shape": "RIGHT_ANGLE_2",
+        "ends": [
+          {
+            "id": "oiw3phaw",
+            "target": "NOTE-7ntb54pU",
+            "attachPointNumber": 3
+          },
+          {
+            "id": "mt8zPyuj",
+            "target": "NOTE-sy7QSrZN",
+            "attachPointNumber": 0
+          }
+        ]
+      }
+    ]
+  }
+}

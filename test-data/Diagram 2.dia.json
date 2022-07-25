@@ -1,0 +1,137 @@
+{
+  "elements": {
+    "notes": [
+      {
+        "id": "NOTE-X3JnRCsN",
+        "userBounds": [
+          45,
+          34,
+          null
+        ],
+        "content": "A",
+        "bounds": [
+          45,
+          34,
+          31.34375,
+          41
+        ]
+      },
+      {
+        "id": "NOTE-EhnoWY1A",
+        "userBounds": [
+          43,
+          219,
+          null
+        ],
+        "content": "B2",
+        "bounds": [
+          43,
+          219,
+          42.46875,
+          41
+        ]
+      },
+      {
+        "id": "NOTE-6gAcxC5X",
+        "userBounds": [
+          229,
+          108,
+          null
+        ],
+        "content": "Hello",
+        "bounds": [
+          229,
+          108,
+          63.578125,
+          41
+        ]
+      },
+      {
+        "id": "NOTE-7ntb54pU",
+        "userBounds": [
+          371,
+          23,
+          null
+        ],
+        "content": "Hello",
+        "bounds": [
+          371,
+          23,
+          63.578125,
+          41
+        ]
+      },
+      {
+        "id": "NOTE-sy7QSrZN",
+        "userBounds": [
+          563,
+          102,
+          null
+        ],
+        "content": "Hello\nWorld\n---\n2",
+        "bounds": [
+          563,
+          102,
+          69.875,
+          109
+        ]
+      },
+      {
+        "id": "NOTE-JakZZE8G",
+        "userBounds": [
+          325,
+          236
+        ],
+        "content": "<< headers >>\nalign: left\n\n! PERMIS\n### CONDUIRE\n! (1 an max)",
+        "bounds": [
+          325,
+          236,
+          146.015625,
+          102
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "id": "RELATION-lViYL76u",
+        "shape": "CENTROID",
+        "ends": [
+          {
+            "id": "P2VDiSMB",
+            "target": "NOTE-X3JnRCsN",
+            "attachPointNumber": 6,
+            "decoration": "EMPTY_RECTANGLE"
+          },
+          {
+            "id": "2Nwexh8E",
+            "target": "NOTE-6gAcxC5X",
+            "attachPointNumber": 9,
+            "decoration": "EMPTY_TRIANGLE"
+          },
+          {
+            "id": "5jb1927Y",
+            "target": "NOTE-EhnoWY1A",
+            "attachPointNumber": 3,
+            "decoration": "FULL_TRIANGLE"
+          }
+        ]
+      },
+      {
+        "id": "RELATION-tWx3fUUz",
+        "shape": "RIGHT_ANGLE_2",
+        "ends": [
+          {
+            "id": "oiw3phaw",
+            "target": "NOTE-7ntb54pU",
+            "attachPointNumber": 3
+          },
+          {
+            "id": "mt8zPyuj",
+            "target": "NOTE-sy7QSrZN",
+            "attachPointNumber": 0
+          }
+        ]
+      }
+    ]
+  }
+}

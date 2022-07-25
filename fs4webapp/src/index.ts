@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import { exec } from "child_process";
 import multer from "multer";
 
-const { BE_PORT, BE_DATAPATH } = process.env;
+const { BE_PORT, BE_DATAPATH , BE_STATICS} = process.env;
 
 const app = express();
 const port = parseInt(BE_PORT || "80", 10);
@@ -24,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.text({ type: 'text/plain' }));
 app.use(bodyParser.text({ type: 'application/json' }));
 app.use(bodyParser.text({ type: 'image/octet-stream' }));
-app.use(express.static('public'));
 app.use(cors());
 
 const extractFilePath = (req: express.Request) => decodeURIComponent(req.path.substring(fileEndpointMapping.length));
@@ -32,6 +31,10 @@ const extractFileUploadPath = (req: express.Request) => decodeURIComponent(req.p
 const extractScriptPath = (req: express.Request) => decodeURIComponent(req.path.substring(scriptEndpointMapping.length));
 
 const clientPathToFSPath = (path: string) => `${dataPath}${path}`;
+
+const staticPath = BE_STATICS || (__dirname + '/public');
+
+app.use(express.static(staticPath));
 
 app.get("/files*", (req, res) => {
   const urlPath = extractFilePath(req);
@@ -174,7 +177,12 @@ app.post("/scripts*", (req, res) => {
 
 });
 
+app.get('*', (req, res) =>{
+  res.sendFile(staticPath + '/index.html');
+});
+
 app.listen(port, () => {
   // tslint:disable-next-line:no-console
-  console.log(`FS4WebApp mounted at http://localhost:${port}${fileEndpointMapping}`);
+  console.log(staticPath + '/index.html');
+  console.log(`FS4WebApp mounted at http://localhost:${port}`);
 });

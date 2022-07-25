@@ -7,8 +7,8 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "BE_DATAPATH=/home/nicolas/Code/monoapp/test-data BE_PORT=8080 node .",
-    "start:prod": "BE_DATAPATH=/var/monoapp BE_PORT=8080 node .",
+    "start": "BE_STATICS=/home/nicolas/Code/monoapp/fs4webapp/public BE_DATAPATH=/home/nicolas/Code/monoapp/test-data BE_PORT=8080 node .",
+    "start:prod": "BE_STATICS=/home/nicolas/Code/monoapp/fs4webapp/public BE_DATAPATH=/var/monoapp BE_PORT=8080 node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

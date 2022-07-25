@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FS4JFile, ls, parentPath } from '../fs4webapp-client';
 import { createHookBasedContext } from '../react-utils/createHookBasedContext';
 
@@ -23,9 +24,23 @@ const defaultValue: NavigatorPersistenceValue = {
 };
 
 const useNavigatorPersistence: (props: NavigatorPersistenceProps) => NavigatorPersistenceValue = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [currentPath, setCurrentPath] = useState<string>("");
   const [currentFile, setCurrentFile] = useState<FS4JFile | null>(defaultValue.currentFile);
   const [files, setFiles] = useState<FS4JFile[]>(defaultValue.files);
+
+
+  // infer currentPath from router location
+  const {pathname} = location;
+  useEffect(() => {
+    if (pathname === "/") {
+      setCurrentPath("");
+    } else {
+      setCurrentPath(pathname);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     async function fetch() {
@@ -49,14 +64,14 @@ const useNavigatorPersistence: (props: NavigatorPersistenceProps) => NavigatorPe
 
   const setTarget = useCallback((target: FS4JFile) => {
     if (target.isDirectory) {
-      setCurrentPath(target.path);
+      navigate(target.path);
     }
     setCurrentFile(target);
   }, []);
 
   const gotoParentPath = useCallback(() => {
     const newPath = parentPath(currentPath);
-    setCurrentPath(newPath);
+    navigate(newPath);
     setCurrentFile({
       name: newPath,
       path: newPath,

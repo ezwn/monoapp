@@ -1,4 +1,6 @@
 import React from 'react';
+import { BrowserRouter } from "react-router-dom";
+
 import { NavigatorPersistenceProvider } from './lib/file-browsing/NavigatorPersistence-ctx';
 import { NavigatorCmp } from './features/navigator/Navigator-cmp';
 import { ActiveFeatureMainViewCmp } from './lib/app-core/ActiveFeatureMainView';
@@ -24,27 +26,29 @@ const features = [FolderBrowser, DiagramEditor, MapEditor, WorldEditor, Timeline
 
 const App: React.FC = () => {
   return (
-    <FeatureListProvider features={features}>
-      <UndoProvider>
-        <NavigatorPersistenceProvider>
-          <ActiveFeatureProvider>
-            <UndoPlugin>
-              <ActiveFeatureGlobalProvider>
-                <CommandDispatcherProvider>
-                  <div className='flex-1 col'>
-                    <NavigatorCmp />
+    <BrowserRouter>
+      <FeatureListProvider features={features}>
+        <UndoProvider>
+          <NavigatorPersistenceProvider>
+            <ActiveFeatureProvider>
+              <UndoPlugin>
+                <ActiveFeatureGlobalProvider>
+                  <CommandDispatcherProvider>
                     <div className='flex-1 col'>
-                      <ActiveFeatureMainViewCmp />
+                      <NavigatorCmp />
+                      <div className='flex-1 col'>
+                        <ActiveFeatureMainViewCmp />
+                      </div>
+                      <CommandStatusBarCmp />
                     </div>
-                    <CommandStatusBarCmp />
-                  </div>
-                </CommandDispatcherProvider>
-              </ActiveFeatureGlobalProvider>
-            </UndoPlugin>
-          </ActiveFeatureProvider>
-        </NavigatorPersistenceProvider>
-      </UndoProvider>
-    </FeatureListProvider>
+                  </CommandDispatcherProvider>
+                </ActiveFeatureGlobalProvider>
+              </UndoPlugin>
+            </ActiveFeatureProvider>
+          </NavigatorPersistenceProvider>
+        </UndoProvider>
+      </FeatureListProvider>
+    </BrowserRouter>
   );
 };
 
